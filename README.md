@@ -13,4 +13,4 @@ From CASA ([solutionarchive.com](https://solutionarchive.com/game/id%2C3964/Dog+
 
 This BBC Micro port was created in 2025. (Specifically, it's a port of the Zenith listing found [at IFDB](https://ifdb.org/viewgame?id=adnqhkzfgrrt5mtv).)
 
-The file dogstar.ssd is a disc-image file in Acorn DFS format which contains a copy of the game and which can be loaded into a BBC Micro emulator such as BeebEm. 
+The file dogstar.ssd is a floppy-disc image file, in Acorn DFS format, which contains a copy of the game and which can be loaded into a BBC Micro emulator such as BeebEm.
