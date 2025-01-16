@@ -11,6 +11,6 @@ From CASA ([solutionarchive.com](https://solutionarchive.com/game/id%2C3964/Dog+
 >
 >The game was originally published on tape by TRS-80 Software Exchange for the TRS-80 Model 1 Level II. It was first advertised in SoftSide, vol. 1, no. 7, April 1979 ... It was then published by SoftSide Publications as a BASIC type-in listing for the TRS-80 in SoftSide, vol. 1, no. 8, May 1979
 
-This BBC Micro port was created in 2025. (Specifically, it's a port of the Zenith listing found [at IFDB](https://ifdb.org/viewgame?id=adnqhkzfgrrt5mtv).) The "cheat-mode" is new to this BBC Micro port.
+This BBC Micro port was created in 2025. (Specifically, it's a port of the Zenith listing found [at IFDB](https://ifdb.org/viewgame?id=adnqhkzfgrrt5mtv).)
 
-The file ***dogstar.ssd*** is a floppy-disc image file, in Acorn DFS format, which contains a copy of the game and which can be loaded into a BBC Micro emulator such as BeebEm.
+The file ***dogstar.ssd*** is a floppy-disc image file, in Acorn DFS format, which contains a copy of the game and which can be loaded into a BBC Micro emulator such as BeebEm. (The "cheat mode" is new to this BBC Micro port.)
