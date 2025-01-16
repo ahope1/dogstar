@@ -1,4 +1,9 @@
 # Dog Star Adventure – a BBC Micro port
+
+**>**   
+**>>> [Play the game online](http://bbcmicro.co.uk/game.php?id=4504) <<<**  
+**>**   
+
 From CASA ([solutionarchive.com](https://solutionarchive.com/game/id%2C3964/Dog+Star+Adventure.html)):
 >Dog Star Adventure is reputed to be the first text adventure to be published in a magazine: the May 1979 issues of SoftSide.
 >
