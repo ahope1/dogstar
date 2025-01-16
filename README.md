@@ -1,2 +1,1 @@
-# dogstar
-Dog Star Adventure – a BBC Micro port
+# Dog Star Adventure – a BBC Micro port
