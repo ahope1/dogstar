@@ -1,39 +1,50 @@
-2 width 80
-3 REM   DOGSTAR.BAS      Dog Star Adventure by Lance Micklus
-5 REM   Modified by Gern for Zenith Z-100   05/30/83 & 12/30/84
-7 REM   From SoftSide MAY 1979 (A TRS-80 Software Magazine)
-10 KEY OFF:ON ERROR GOTO 50:GOTO 100
-50 PRINT:PRINT"ERROR!!!":RESUME 2125
-100 CLS:PRINT:PRINT:PRINT:PRINT
+REM DOGSTAR.BAS      Dog Star Adventure by Lance Micklus
+REM Modified by Gern for Zenith Z-100   05/30/83 & 12/30/84
+REM From SoftSide MAY 1979 (A TRS-80 Software Magazine)
+REM
+REM Converted for the BBC Micro by Ant/Lurkio, 2025  
+
+REM **** line 2205: DEBUG (disable random death (when guard shoots you)) ****
+REM 2205 GOTO 2425
+
+100 MODE7:PRINT:PRINT:PRINT:PRINT:DIM W% 255:L%=40:*FX15
 110 PRINT "DOG STAR"
 120 PRINT "by Lance Micklus,"
 130 PRINT "Winooski, Vt. 05404":PRINT:PRINT
 140 PRINT "Copyright 1979"
-190 RANDOMIZE VAL(RIGHT$(TIME$,2)):DEFINT A-Z
+
 200 GOSUB 30300
-450 LC=2:SL=64:BL=4:GF=50:RV=16396
+450 LC=2:SL=L%:BL=4:GF=50:RV=16396:TC=0:MD=0:DR=0:DJ=0:CR=0:CM=0:TB=0:BT=0:T$=STRING$(100,"*")
+
 600 GOTO 10300
+
 2125 IF TC<25 OR INT(RND(1)*GF+1)<>1 THEN 2425
 2150 IF TC=300 THEN GF=20
 2175 IF LC<3 OR LC=9 OR LC=26 OR LC=36 OR LC=37 THEN 2425
 2200 IF LC>26 AND LC<31 THEN 2425
-2225 PRINT "Holy smokes. An armed guard just walked in."
+
+2225 PROCw("Holy smokes. An armed guard just walked in.")
 2250 GOSUB 20350:IF VB<>12 OR NO<>15 THEN 5575
 2275 X=13:GOSUB 21450:IF Y<>-1 THEN 5575
-2300 IF BL=0 THEN CLS:PRINT "I'm out of ammunition.":PRINT:GOTO 5600
+2300 IF BL=0 THEN CLS:PRINT'"I'm out of ammunition.":PRINT:GOTO 5600
 2325 PRINT "zzZAP! No more guard."
 2350 BL=BL-1:IF BL=0 THEN PRINT "I'm out of ammunition."
+
 2425 IF MD<>TC THEN 2550
 2450 X=22:GOSUB 21450:IF Y<>-1 THEN 2550
 2475 PRINT "Your McDonald's Hamburger is cold."
 2550 GOSUB 20350:TC=TC+1
 2575 IF VB=0 AND NO=0 THEN 2650 ELSE 2800
+
 2650 PRINT "I don't know how to do that.":GOTO 2125
+
 2725 PRINT "Nothing happened.":GOTO 2125
+
+REM: GO
 2800 IF VB>1 OR NO>7 THEN 3175
 2825 IF NO=0 THEN 2650
 2850 IF DS(LC,NO-1)=0 THEN PRINT "I can't go that way!":GOTO 2125
-2875 IF DR AND DS(LC,NO-1)>2 AND DS(LC,NO-1)<6 THEN PRINT "I can't go that way.  Flight deck doors are open.":PRINT "NO AIR!!!":GOTO 2125
+2875 IF DR AND DS(LC,NO-1)>2 AND DS(LC,NO-1)<6 THEN PROCw("I can't go that way.  Flight deck doors are open."):PRINT"NO AIR!!!":GOTO 2125
 2900 IF NO=3 AND LC=31 AND NOT DJ THEN PRINT M0$:GOTO 2125
 2925 IF LC=35 AND DS(LC,NO-1)=36 AND OB(21,1)<>0 THEN PRINT "The robot won't let me through.":GOTO 2125
 2950 IF LC=17 AND OB(13,1)=17 THEN 5575
@@ -43,62 +54,82 @@
 3050 IF LC=34 THEN HE$(LC)=""
 3075 IF LC=26 THEN 11800
 3100 GOTO 10300
+
+REM: LOOK
 3175 IF VB=3 THEN 10300
+
+REM: GET
 3250 IF VB<>2 THEN 3700
-3275 IF NO=0 THEN PRINT "I don't know what a ";CHR$(34);NO$(0);CHR$(34);" is.":GOTO 2125
+3275 IF NO=0 THEN PROCw("I don't know what a "+CHR$(34)+NO$(0)+CHR$(34)+" is."):GOTO 2125
 3300 IF CR>5 THEN PRINT "I can't carry any more.":PRINT "HINT: Drop something.":GOTO 2125
 3325 FOR I=1 TO LO:IF OB(I,0)=NO THEN 3350 ELSE NEXT I:GOTO 2650
-3350 IF OB(I,1)=-1 THEN PRINT "I'm already carrying it.":GOTO 2125
-3375 IF OB(I,1)<>LC THEN PRINT "I don't see it.":GOTO 2125
+3350 IF OB(I,1)=-1 THEN PRINT "I'm already carrying it.":I=LO:NEXT I:GOTO 2125
+3375 IF OB(I,1)<>LC THEN PRINT "I don't see it.":i=I:I=LO:NEXT I:I=i:GOTO 2125
 3400 IF NO<>37 THEN 3475
-3425 X=13:GOSUB 21450:IF Y<>-1 THEN PRINT "I don't have a blaster to put it in.":GOTO 2125
-3450 BL=4:OB(I,1)=0:PRINT "My BLASTER's reloaded.":FOR I=1 TO 1:NEXT I:GOTO 2125
-3475 IF NO=15 OR NO=25 OR NO=34 THEN PRINT "He looks pretty mean to me.":GOTO 2125
-3500 CR=CR+1:OB(I,1)=-1:PRINT "O.K.":FOR I=1 TO 1:NEXT I
+3425 X=13:GOSUB 21450:IF Y<>-1 THEN PRINT "I don't have a blaster to put it in.":I=LO:NEXT I:GOTO 2125
+3450 BL=4:OB(I,1)=0:PRINT "My BLASTER's reloaded.":i=I:I=LO:NEXT I:I=i:GOTO 2125
+3475 IF NO=15 OR NO=25 OR NO=34 THEN PRINT "He looks pretty mean to me.":I=LO:NEXT I:GOTO 2125
+3500 CR=CR+1:OB(I,1)=-1:PRINT "O.K.":I=LO:NEXT I
 3525 IF NO=14 AND NOT CM THEN PRINT "A voice says: ";CHR$(34);"SESAME";CHR$(34);".":CM=-1
 3550 IF NO=22 AND MD=0 THEN MD=TC+50
 3575 IF NO=12 THEN HE$(2)=""
 3600 IF NO=13 THEN HE$(7)=""
 3625 GOTO 2125
+
+REM: INVENTORY
 3700 IF VB<>4 THEN 3875
 3725 PRINT "I'm carrying:"
 3750 K=0:FOR I=1 TO LO:IF OB(I,1)=-1 THEN PRINT OB$(I):K=1
 3775 NEXT I:IF K=0 THEN PRINT "NOTHING"
 3800 PRINT:GOTO 2125
+
+REM: SCORE
 3875 IF VB<>5 THEN 3950 ELSE GOSUB 21050:GOTO 2125
+
+REM: DROP
 3950 IF VB<>6 THEN 4200
 3975 IF NO=0 THEN 3275
 4000 IF LC=2 THEN PRINT "There's no room here.":GOTO 2125
 4025 IC=0:FOR I=1 TO LO:IF OB(I,1)=LC THEN IC=IC+1
-4050 NEXT I:IF IC>12 THEN PRINT "There not enough room. Get rid of something.":GOTO 2125
+4050 NEXT I:IF IC>12 THEN PROCw("There not enough room. Get rid of something."):GOTO 2125
 4075 FOR I=0 TO LO:IF OB(I,0)=NO THEN 4100 ELSE NEXT I:GOTO 2650
-4100 IF OB(I,1)<>-1 THEN PRINT "I'm not carrying it.":GOTO 2125
-4125 CR=CR-1:OB(I,1)=LC:PRINT "O.K.":FOR I=1 TO 1:NEXT I:GOTO 2125
+4100 IF OB(I,1)<>-1 THEN PRINT "I'm not carrying it.":I=LO:NEXT I:GOTO 2125
+4125 CR=CR-1:OB(I,1)=LC:PRINT "O.K.":I=LO:NEXT I:GOTO 2125
+
+REM: HELP
 4200 IF VB<>7 THEN 4300
-4225 IF HE$(LC)="" THEN PRINT "How am I supposed to know what to do?":GOTO 2125 ELSE PRINT HE$(LC):GOTO 2125
+4225 IF HE$(LC)="" THEN PRINT "How am I supposed to know what to do?":GOTO 2125 ELSE PROCw(HE$(LC)):GOTO 2125
+
+REM: SAVE
 4300 IF VB<>8 THEN 4750
 4375 IF NOT BT THEN 4475 ELSE PRINT "Press (ENTER) when ready to : RECORD :"
 4400 GOSUB 22000:GOTO 4525
-4475 IF NO$(0)="" THEN NO$(0)="DOGSTAR.DAT"
-4500 OPEN"O",1,NO$(0)
+4475 IF NO$(0)="" THEN NO$(0)="DOGSDAT"
+4500 F%=OPENOUT NO$(0)
 4525 FOR I=0 TO LO
-4550 PRINT #1,OB(I,0);OB(I,1);OB(I,2)
+4550 PRINT#F%,OB(I,0),OB(I,1),OB(I,2)
 4575 NEXT I
-4625 PRINT #1,TB;TC;CM;DR;BL;MD;GF;DJ;CR;LC
-4650 CLOSE
+4625 PRINT#F%,TB,TC,CM,DR,BL,MD,GF,DJ,CR,LC
+4650 CLOSE#F%
 4675 PRINT "O.K.":GOTO 2125
+
+REM: LOAD
 4750 IF VB<>9 THEN 5150
 4825 GOTO 4925
 4850 GOSUB 22000:GOTO 4975
-4925 IF NO$(0)="" THEN NO$(0)="DOGSTAR.DAT"
-4950 OPEN"I",1,NO$(0)
+4925 IF NO$(0)="" THEN NO$(0)="DOGSDAT"
+4950 F%=OPENIN NO$(0)
 4975 FOR I=0 TO LO
-5000 INPUT #1,OB(I,0),OB(I,1),OB(I,2)
+5000 INPUT#F%,OB(I,0),OB(I,1),OB(I,2)
 5025 NEXT I
-5075 INPUT #1,TB,TC,CM,DR,BL,MD,GF,DJ,CR,LC
-5100 CLOSE
+5075 INPUT#F%,TB,TC,CM,DR,BL,MD,GF,DJ,CR,LC
+5100 CLOSE#F%
 5125 GOTO 10300
-5150 IF VB<>10 THEN 5225 ELSE CLS:J=0:GOTO 11200
+
+REM: QUIT
+5150 IF VB<>10 THEN 5225 ELSE CLS:PRINT:J=0:GOTO 11200
+
+REM: PRESS
 5225 IF VB<>11 THEN 5725
 5250 IF NO<>10 THEN 2650
 5275 IF LC<>2 AND LC<>11 THEN PRINT "What button,":GOTO 2125
@@ -107,12 +138,14 @@
 5375 X=12:GOSUB 21450:IF Y<>1 THEN 2725
 5425 X=24:GOSUB 21450:IF Y<>1 THEN 2725
 5450 IF NOT TB THEN PRINT N3$:GOTO 2725
-5475 IF NOT DR THEN PRINT N4$:GOTO 2725
+5475 IF NOT DR THEN PROCw(N4$):GOTO 2725
 5500 GOTO 11150
-5575 CLS:PRINT "H E L P ! ! !":PRINT
-5600 PRINT "Roche Soldiers are everywhere. I've been captured."
+5575 CLS:PRINT'"H E L P ! ! !":PRINT
+5600 PROCw("Roche Soldiers are everywhere. I've been captured.")
 5625 PRINT "I'm now a prisoner. Woe is me...":PRINT
 5650 GOTO 11500
+
+REM: SHOOT
 5725 IF VB<>12 OR NO=0 THEN 6025
 5750 IF BL=0 THEN PRINT "But I don't have any ammunition left.":GOTO 2125
 5775 X=13:GOSUB 21450:IF Y<>-1 THEN PRINT "But I'm not carrying a BLASTER.":GOTO 2125
@@ -120,18 +153,22 @@
 5825 IF NO=34 THEN PRINT "zzZAP!":BL=BL-1:GOTO 2125
 5850 IF Y<>LC THEN PRINT "I don't see it.":GOTO 2125
 5875 FOR I=1 TO LO:IF OB(I,0)=NO THEN 5900 ELSE NEXT I:GOTO 2650
-5900 OB(I,1)=0:FOR I=1 TO 1:NEXT I:PRINT "zzZAP!!!  The ";NO$(NO);" vaporized."
+5900 OB(I,1)=0:I=LO:NEXT I:PROCw("zzZAP!!!  The "+NO$(NO)+" vaporized.")
 5925 BL=BL-1:IF BL=0 THEN PRINT "I'm out of ammunition."
 5950 GOTO 2125
+
+REM: SAY
 6025 IF VB<>13 THEN 6275
 6050 IF NO=0 THEN PRINT "Say what?":GOTO 2125
 6075 X=14:GOSUB 21450
 6100 IF Y<>-1 OR NO<>19 THEN PRINT "O.K.   ";NO$(NO):GOTO 2125
 6125 IF DR THEN 2725
-6150 DR=-1:PRINT "A voice comes over the P.A. system and says:"
+6150 DR=-1:PROCw("A voice comes over the P.A. system and says:")
 6160 PRINT "OPENNING FLIGHT DECK DOORS":PRINT
 6175 IF LC>2 AND LC<6 THEN PRINT:PRINT "Yips!!! There's no air!!!  CROAK...":END
 6200 GOTO 2125
+
+REM: READ
 6275 IF VB<>14 THEN 6750
 6300 IF NO<>20 AND NO<>16 AND NO<>11 AND NO<>33 THEN 2650
 6325 IF NO=20 THEN 6550
@@ -149,33 +186,46 @@
 6625 PRINT ">> KILROY MADE IT HERE, TOO <<"
 6650 PRINT ">> SAY SECURITY <<"
 6675 GOTO 2125
+
+REM: EAT
 6750 IF VB<>15 THEN 6975
-6775 IF NO=0 THEN PRINT "What's a ";NO$(0);"?":GOTO 2125
+6775 IF NO=0 THEN PROCw("What's a "+NO$(0)+"?"):GOTO 2125
 6800 IF NO<>22 THEN PRINT "Don't be rediculous.":GOTO 2125
 6825 X=22:GOSUB 21450:IF Y<>-1 THEN PRINT "I'm not holding it.":GOTO 2125
 6850 FOR I=1 TO LO:IF OB(I,0)=22 THEN 6875 ELSE NEXT I:PRINT "I don't know where it is.":GOTO 2125
 6875 OB(I,1)=0:PRINT "Chump - Chump.  Hummm, good."
-6900 FOR I=1 TO 1:NEXT I:GOTO 2125
+6900 I=LO:NEXT I:GOTO 2125
+
+REM: CSAVE
 6975 IF VB<>16 OR NO<>23 OR LC<>16 THEN 7125
 7000 X=23:GOSUB 21450:IF Y<>-1 THEN PRINT M1$:GOTO 2125
-7025 OB(11,1)=0:OB(14,1)=16:CR=CR-1:PRINT M2$
+7025 OB(11,1)=0:OB(14,1)=16:CR=CR-1:PROCw(M2$)
 7050 GOTO 2125
+
+REM: OPEN
 7125 IF VB<>18 OR NO<>36 THEN 7275
 7150 IF NO<>36 OR LC<>31 THEN 2650
 7175 X=17:GOSUB 21450:IF Y<>-1 THEN PRINT M3$:GOTO 2125
-7200 HE$(31)="":DJ=-1:PRINT M4$:GOTO 2125
+7200 HE$(31)="":DJ=-1:PROCw(M4$):GOTO 2125
+
+REM: FEED
 7275 IF VB<>19 OR NO=0 THEN 7600
 7325 IF LC<>35 AND NO=34 THEN PRINT M5$:GOTO 2125
 7350 X=22:GOSUB 21450:IF Y<>-1 THEN PRINT M6$:GOTO 2125
-7375 X=35:GOSUB 21450:IF Y=1 OR Y=LC AND NO=35 THEN PRINT"I don't see her.":GOTO 2125 ELSE IF NO=35 THEN PRINT M7$:K=I:FOR I=1 TO LO:IF OB(I,0)=22 THEN 7525 ELSE NEXT I:GOTO 2650
-7400 IF NO<>34 THEN PRINT NO$(0);M8$:GOTO 2125
-7425 IF TC>MD THEN PRINT M9$:GOTO 2125
+REM7375 X=35:GOSUB 21450:IF Y=1 OR Y=LC AND NO=35 THEN PRINT"I don't see her.":GOTO 2125 ELSE IF NO<>35 ELSE PROCw(M7$):FOR I=1 TO LO:IF OB(I,0)=22 THEN K=I: GOTO 7525 ELSE NEXT I:GOTO 2650
+7375 X=35:GOSUB 21450:IF Y<>-1 AND Y<>LC AND NO=35 THEN PRINT"I don't see her.":GOTO 2125 ELSE IF NO<>35 ELSE PROCw(M7$):FOR I=1 TO LO:IF OB(I,0)=22 THEN K=I: GOTO 7525 ELSE NEXT I:GOTO 2650
+7400 IF NO<>34 THEN PROCw(NO$(0)+M8$):GOTO 2125
+7425 IF TC>MD THEN PROCw(M9$):GOTO 2125
 7450 FOR I=1 TO LO:IF OB(I,0)=34 THEN 7475 ELSE NEXT I:GOTO 2650
 7475 K=I:FOR I=1 TO LO:IF OB(I,0)=22 THEN 7500 ELSE NEXT I:GOTO 2650
-7500 PRINT N0$:HE$(35)=""
-7525 OB(K,1)=0:OB(I,1)=0:FOR I=1 TO 1:NEXT I:GOTO 2125
+7500 PROCw(N0$):HE$(35)=""
+7525 OB(K,1)=0:OB(I,1)=0:I=LO:NEXT I:GOTO 2125
+
+REM: SHOW
 7600 IF VB<>17 THEN 7700
 7625 PRINT NO$(0):GOTO 2125
+
+REM: HIT
 7700 IF VB<>20 THEN 7975
 7725 IF NO=0 THEN 2650
 7750 X=NO:GOSUB 21450:IF Y=-1 THEN PRINT "I'm carrying it. That's impossible.":GOTO 2125
@@ -185,9 +235,12 @@
 7850 IF NO=15 OR NO=25 OR NO=34 THEN PRINT "I'd rather not. He might hit me back!":GOTO 2125
 7875 IF NO=35 THEN PRINT "That's not nice!":GOTO 2125
 7900 GOTO 2725
+
+REM: KILL
 7975 IF VB<>21 THEN 8000 ELSE PRINT "I'm not strong enough to kill anything.":GOTO 2125
 8000 GOTO 2650
-10300 CLS:PRINT DS$(LC):A$=""
+
+10300 CLS:PRINT:PROCw(DS$(LC)):A$=""
 10305 IF LC=35 THEN GF=10
 10400 IF LC=7 THEN 10700
 10450 K=0:FOR I=1 TO LO:IF OB(I,1)<>LC THEN 10600
@@ -195,176 +248,244 @@
 10550 IF LEN(A$)+5+LEN(OB$(I))>SL THEN PRINT A$:A$=OB$(I):ELSE A$=A$+"     "+OB$(I)
 10600 NEXT I
 10650 IF A$<>"" THEN PRINT A$
-10700 PRINT:PRINT "Obvious directions are ";:K=0
+10700 PRINT:T$="Obvious directions are ":K=0
 10750 FOR I=0 TO 5:IF DS(LC,I)=0 THEN 10900
-10800 IF K<>0 THEN PRINT ", ";
-10850 PRINT NO$(I+1);:K=1
+10800 IF K<>0 THEN T$=T$+", "
+10850 T$=T$+NO$(I+1):K=1
 10900 NEXT I
-10950 IF K=0 THEN PRINT "unknown";
-11000 PRINT ".":GOTO 2125
-11150 CLS:GOSUB 21050
-11200 IF J=0 THEN PRINT "We have FAILED our mission. The forces of Princess Leya will be conquered."
-11250 IF J=SC THEN PRINT:PRINT "We are HEROS. The forces of Princess Leya will conquer the evil Roche soldiers, and freedom will prevail throughout the galaxy."
-11300 IF J>0 AND J<SC THEN PRINT"We have helped the forces of Princess Leya defend the galaxy. Long live the forces of freedom!"
+10950 IF K=0 THEN T$=T$+"unknown"
+11000 T$=T$+".":PROCw(T$):GOTO 2125
+
+11150 CLS:PRINT:GOSUB 21050
+11200 IF J=0 THEN PROCw("We have FAILED our mission. The forces of Princess Leya will be conquered.")
+11250 IF J=SC THEN PRINT:PROCw("We are HEROS. The forces of Princess Leya will conquer the evil Roche soldiers, and freedom will prevail throughout the galaxy.")
+11300 IF J>0 AND J<SC THEN PROCw("We have helped the forces of Princess Leya defend the galaxy. Long live the forces of freedom!")
 11500 PRINT
 11550 INPUT "Do you want to play again (Y or N)";A$:A$=LEFT$(A$,1)
 11600 IF A$="Y" OR A$="y" THEN RUN ELSE END
-11800 CLS:PRINT"A voice booms out, ";CHR$(34);"WHO GOES THERE";CHR$(34)
+
+11800 CLS:PRINT'"A voice booms out, ";CHR$(34);"WHO GOES THERE";CHR$(34)
 11850 GOSUB 20350
 11900 IF VB<>13 OR NO<>30 THEN 5575
-11950 PRINT N1$
+11950 PROCw(N1$)
 12000 GOSUB 20350
 12050 X=31:GOSUB 21450:IF Y<>-1 THEN 5575
 12100 IF VB<>17 OR NO<>31 THEN 5575 ELSE 10300
-20350 PRINT: LINE INPUT "What should I do? ";I$:PRINT:CM$=""
+
+20350 VDUFNb*10:INPUTLINE"What should I do? "I$:PRINT:CM$=""
 20360 FOR IL=1 TO LEN(I$):IN=ASC(MID$(I$,IL,1)):IF IN>96 AND IN<123 THEN IN=IN AND 223
 20365 CM$=CM$+CHR$(IN):NEXT IL
 20370 IF CM$="N" THEN CM$="NORTH" ELSE IF CM$="S" THEN CM$="SOUTH" ELSE IF CM$="E" THEN CM$="EAST" 
 20375 IF CM$="W" THEN CM$="WEST" ELSE IF CM$="U" THEN CM$="UP" ELSE IF CM$="D" THEN CM$="DOWN" 
 20380 IF CM$="L" THEN CM$="LOOK" ELSE IF CM$="I" THEN CM$="INVENTORY" ELSE IF CM$="H" THEN CM$="HELP"
 20395 VB$(0)="":NO$(0)="":VB=0:NO=0:IF LEN(CM$)=0 THEN 20350
-20400 FOR ZL=1 TO LEN(CM$):IF MID$(CM$,ZL,1)<>" " THEN VB$(0)=VB$(0)+MID$(CM$,ZL,1):NEXT ZL
-20500 FOR ZL=1 TO LV:IF VB$(ZL)<>"" AND LEFT$(VB$(0),LEN(VB$(ZL)))=VB$(ZL) THEN VB=ZL:GOTO 20600 ELSE NEXT ZL
+20400 FOR ZL=1 TO LEN(CM$):IF MID$(CM$,ZL,1)<>" " THEN VB$(0)=VB$(0)+MID$(CM$,ZL,1):NEXT ZL ELSE ZL=LEN(CM$):NEXT ZL
+20500 FOR ZL=1 TO LV:IF VB$(ZL)<>"" AND LEFT$(VB$(0),LEN(VB$(ZL)))=VB$(ZL) THEN VB=ZL:ZL=LV:NEXT ZL:GOTO 20600 ELSE NEXT ZL
 20550 VB=0:NO$(0)=VB$(0):GOTO 20650
 20600 IF LEN(VB$(0))+1>=LEN(CM$) THEN NO=0:RETURN ELSE NO$(0)=RIGHT$(CM$,LEN(CM$)-1-LEN(VB$(0)))
-20650 FOR ZL=1 TO LN:IF NO$(ZL)<>"" AND LEFT$(NO$(0),LEN(NO$(ZL)))=NO$(ZL) THEN NO=ZL:GOTO 20800 ELSE NEXT ZL
+20650 FOR ZL=1 TO ln:IF NO$(ZL)<>"" AND LEFT$(NO$(0),LEN(NO$(ZL)))=NO$(ZL) THEN NO=ZL:ZL=ln:NEXT ZL:GOTO 20800 ELSE NEXT ZL
 20700 NO=0:RETURN
-20800 FOR ZL=1 TO 1:NEXT ZL:RETURN
+20800 RETURN
+
 21050 J=0:FOR I=1 TO LO:IF OB(I,1)=1 THEN J=J+OB(I,2)
-21100 NEXT I:PRINT "Out of a maximum of";SC;"points, you have";J;"points."
+21100 NEXT I:PROCw("Out of a maximum of "+STR$(SC)+" points, you have "+STR$(J)+" points.")
 21150 IF J=0 THEN PRINT "We're not doing too good."
 21200 RETURN
-21450 FOR ZL=0 TO LO:IF OB(ZL,0)=X THEN Y=OB(ZL,1):GOTO 21500 ELSE NEXT ZL:Y=-99:RETURN
-21500 FOR ZL=1 TO 1:NEXT ZL:RETURN
+
+21450 FOR ZL=0 TO LO:IF OB(ZL,0)=X THEN Y=OB(ZL,1):ZL=LO:NEXT ZL:GOTO 21500 ELSE NEXT ZL:Y=-99:RETURN
+21500 RETURN
+
 22000 A$=INKEY$
 22010 IF INKEY$="" THEN 22010 ELSE RETURN
+
 30300 SC=215
-30600 LV=21:DIM VB$(LV)
-30650 VB$(1)="GO":VB$(2)="GET":VB$(3)="LOOK"
-30700 VB$(4)="INVEN":VB$(5)="SCORE":VB$(6)="DROP"
-30750 VB$(7)="HELP":VB$(8)="SAVE":VB$(9)="LOAD":VB$(10)="QUIT"
-30800 VB$(11)="PRESS":VB$(12)="SHOOT":VB$(13)="SAY"
-30850 VB$(14)="READ":VB$(15)="EAT":VB$(16)="CSAVE"
-30900 VB$(17)="SHOW":VB$(18)="OPEN":VB$(19)="FEED"
-30950 VB$(20)="HIT":VB$(21)="KILL"
-31100 LN=37:DIM NO$(LN)
-31150 NO$(1)="NORTH":NO$(2)="EAST":NO$(3)="SOUTH"
-31200 NO$(4)="WEST":NO$(5)="UP":NO$(6)="DOWN"
-31250 NO$(10)="BUTTON":NO$(11)="TAG":NO$(12)="FUEL"
-31300 NO$(13)="BLASTER":NO$(14)="COMMUNICATOR":NO$(15)="GUARD"
-31350 NO$(16)="MAP":NO$(17)="KEYS":NO$(18)="NECKLACE"
-31400 NO$(19)="SESAME":NO$(20)="GRAFFITI"
-31450 NO$(21)="CAPE":NO$(22)="HAMBURGER"
-31500 NO$(23)="TAPE":NO$(24)="TURBO"
-31550 NO$(25)="SCIENTIST":NO$(26)="PLANS"
-31600 NO$(27)="SCHEMATIC":NO$(28)="DEVICE":NO$(29)="GUN"
-31650 NO$(30)="SECURITY":NO$(31)="I.D.":NO$(32)="CRYSTALS"
-31700 NO$(33)="SIGN":NO$(34)="ROBOT":NO$(35)="PRINCESS"
-31750 NO$(36)="DOOR":NO$(37)="AMMUNITION"
-31900 CL=37:DIM DS$(CL)
-31950 DS$(1)="I'm in the passenger & storage compartment of my space ship. There's an exit here to leave the ship."
-32000 DATA 2,0,0,0,0,3
-32050 DS$(2)="I'm in the cockpit of my space ship. A large red button says >> PRESS TO BLAST OFF <<"
-32100 DATA 0,0,1,0,0,0
-32150 DS$(3)="I'm standing next to my space ship which is located on a huge flight deck."
-32200 DATA 18,0,4,0,1,0
-32250 DS$(4)="I'm out on the flight deck of General Doom's Battle Cruiser."
-32300 DATA 3,5,4,4,0,0
-32350 DS$(5)=DS$(4):DATA 4,6,5,4,0,0
-32400 DS$(6)="I'm in a hallway. There are doors on all sides. The door to the north says: >> CLOSED FOR THE DAY <<"
-32450 DATA 7,0,8,5,0,0
-32500 DS$(7)="I'm in the SUPPLY DEPOT. around me I see: all kinds of things"
-32550 DATA 0,0,6,0,0,0
-32600 DS$(8)="I'm at the end of one of the hallways. I can here voices nearby. Sounds like guards."
-32650 DATA 6,10,0,9,0,12
-32700 DS$(9)="I'm in the STRATEGY PLANNING room.":DATA 11,8,0,0,0,0
-32750 DS$(10)="I'm in the DECONTAMINATION area.":DATA 0,14,0,8,0,0
-32800 DS$(11)="This area is the tractor beam control room. A large sign warns:  >> DO NOT PRESS ANY BUTTONS <<"
-32850 DATA 0,0,9,0,0,0
-32900 DS$(12)="I'm in another hallway. To the EAST is a restroom."
-32950 DATA 15,13,0,0,8,0
-33000 DS$(13)="This is what is commonly called on earth, the BATHROOM. There's graffiti written all over the wall. Pipes lead up through the ceiling."
-33050 DATA 15,0,0,12,27,0
-33100 DS$(14)="This appears to be an interrogation room.":DATA 0,0,0,10,0,0
-33150 DS$(15)="I'm in a LOUNGE.":DATA 0,0,13,12,0,0
-33200 DS$(16)="This is a computer room. There's a TRS-80 in here. On the screen it says:  >> CSAVE TAPE <<":DATA 17,0,18,0,0,0
-33250 DS$(17)="I'm in a testing labortory.":DATA 0,0,16,0,0,0
-33300 DS$(18)="I'm in a hallway. A large arrow points EAST and says: >> TO THE VAULT <<"
-33350 DATA 16,25,3,19,0,0
-33400 DS$(19)="This is the entrance to the DEVELOPMENT LAB SECTION":DATA 20,18,21,20,22,0
-33450 DS$(20)="I'm in a long corridor. There are labortories all around me.":DATA 19,23,21,20,22,24
-33500 DS$(21)="I'm in a research lab.":DATA 20,0,0,0,0,0
-33550 DS$(22)="I'm lost!":DATA 22,22,22,22,22,20
-33600 DS$(23)=DS$(21):DATA 0,0,0,20,0,0
-33650 DS$(24)=DS$(21):DATA 0,0,0,0,20,0
-33700 DS$(25)="I'm near the entrance to the vault. A sign here says: >> AUTHORIZED PERSONEL ONLY <<"
-33750 DATA 0,26,0,18,0,0
-33800 DS$(26)="I'm in the vault.":DATA 0,0,0,25,0,0
-33850 DS$(27)="I'm in a pipe tunnel which leads in every direction.":DATA 28,27,27,27,27,13
-33900 DS$(28)=DS$(27):DATA 29,29,29,29,30,29
-33950 DS$(29)="I'm lost in a maze of pipes.":DATA 28,29,29,29,29,27
-34000 DS$(30)="I'm in the pipe maze. Below me I think I can see the jail."
-34050 DATA 29,29,28,29,29,31
-34100 DS$(31)="I'm in the jail."
-34150 DATA 32,33,34,35,0,0
-34200 DS$(32)="I'm in a jail cell.":DATA 0,0,31,0,0,0
-34250 DS$(33)=DS$(32):DATA 0,0,0,31,0,0
-34300 DS$(34)=DS$(32):DATA 31,0,0,0,0,0
-34350 DS$(35)="I'm at the security desk. To the north an elevator.":DATA 36,31,0,0,0,0
-34400 DS$(36)="I'm in the elevator.":DATA 0,0,35,0,37,0
-34450 DS$(37)=DS$(36):DATA 0,0,14,0,0,36
-34850 LO=23:DIM OB$(LO)
-34900 OB$(1)="a TAG which says: >> NEEDS TURBO <<":DATA 11,5,0
-34950 OB$(2)="Anti-matter FUEL":DATA 12,5,5
-35000 OB$(3)="BLASTER":DATA 13,7,0
-35050 OB$(4)="COMMUNICATOR":DATA 14,9,0
-35100 OB$(5)="A very surprised GUARD":DATA 15,9,0
-35150 OB$(6)="MAP of the ship":DATA 16,29,20
-35200 OB$(7)="some KEYS":DATA 17,9,0
-35250 OB$(8)="a shinestone NECKLACE":DATA 18,10,20
-35300 OB$(9)="Princess Leya's CAPE":DATA 21,14,5
-35350 OB$(10)="McDonald's HAMBURGER":DATA 22,15,0
-35400 OB$(11)="a cassette TAPE":DATA 23,7,0
-35450 OB$(12)="a TURBOENCABULATOR":DATA 24,17,5
-35500 OB$(13)="an evil looking SCIENTIST":DATA 25,17,0
-35550 OB$(14)="secret attack PLANS":DATA 26,0,20
-35600 OB$(15)="Death Ray SCHEMATIC":DATA 27,9,20
-35650 OB$(16)="Cloaking DEVICE":DATA 28,17,20
-35700 OB$(17)="Micro Laser GUN":DATA 29,24,20
-35750 OB$(18)="I.D. card":DATA 31,17,0
-35800 OB$(19)="Malidium CRYSTALS (the Treasury!)":DATA 32,26,30
-35850 OB$(20)="a SIGN which says: >> OUT OF ORDER <<":DATA 33,3,0
-35900 OB$(21)="attack ROBOT":DATA 34,35,0
-35950 OB$(22)="PRINCESS Leya":DATA 35,34,50
-36000 OB$(23)="AMMUNITION":DATA 37,7,0
-36150 DIM DS(CL,5):RESTORE
-36200 FOR ZL=1 TO CL:FOR ZD=0 TO 5
-36250 READ DS(ZL,ZD):NEXT ZD:NEXT ZL
-36300 DIM OB(LO,2)
-36350 FOR ZL=1 TO LO:READ OB(ZL,0),OB(ZL,1),OB(ZL,2):NEXT ZL
-36500 DIM HE$(CL)
-36550 HE$(1)="I think we're suppose to leave the stuff here."
-36600 HE$(2)="I wonder if we have enough fuel?"
-36650 HE$(7)="How 'bout a BLASTER."
-36700 HE$(9)="Try SHOOT GUARD."
-36750 HE$(13)="It might be intersting to read the graffiti."
-36800 HE$(17)="Try SHOOT SCIENTIST."
-36850 HE$(22)="I'm as confused as you are.":HE$(29)=HE$(22)
-36900 HE$(31)="It might help if we had some keys to OPEN any locked DOOR S."
-36950 HE$(35)="Did you bring anything to eat?"
-37100 M0$="I can't go there. The door is locked."
-37150 M1$="I'm not carrying any blank tape."
-37200 M2$="The TRS-80 recorded something on the tape, and then it printed: >> ATTACK PLANS -- VERY SECRET <<"
-37250 M3$="I can't. I'm not carrying any keys."
-37300 M4$="O.K. The door to the jail cell is unlocked."
-37350 M5$="There's no robot here."
-37400 M6$="But I don't have any hamburgers."
-37450 M7$="Chump...chump   BURP! The princess thanks you for a delicious meal."
-37500 M8$=" doesn't eat hamburger."
-37550 M9$="Nothing happened. The hamburger is cold you know."
-37600 N0$="The attack robot eats the hamburger and disappears."
-37650 N1$="I'm at the identification terminal. On the screen it says: >> SHOW I.D. <<"
-37700 N2$="The tractor beam is off."
-37750 N3$="The tractor beam is on."
-37800 N4$="You forgot to open the flight deck doors."
-37850 RETURN
+30301 LV=21:DIM VB$(LV)
+30302 VB$(1)="GO":VB$(2)="GET":VB$(3)="LOOK"
+30303 VB$(4)="INVEN":VB$(5)="SCORE":VB$(6)="DROP"
+30304 VB$(7)="HELP":VB$(8)="SAVE":VB$(9)="LOAD":VB$(10)="QUIT"
+30305 VB$(11)="PRESS":VB$(12)="SHOOT":VB$(13)="SAY"
+30306 VB$(14)="READ":VB$(15)="EAT":VB$(16)="CSAVE"
+30307 VB$(17)="SHOW":VB$(18)="OPEN":VB$(19)="FEED"
+30308 VB$(20)="HIT":VB$(21)="KILL"
+
+30309 ln=37:DIM NO$(ln)
+30310 NO$(1)="NORTH":NO$(2)="EAST":NO$(3)="SOUTH"
+30311 NO$(4)="WEST":NO$(5)="UP":NO$(6)="DOWN"
+30312 NO$(10)="BUTTON":NO$(11)="TAG":NO$(12)="FUEL"
+30313 NO$(13)="BLASTER":NO$(14)="COMMUNICATOR":NO$(15)="GUARD"
+30314 NO$(16)="MAP":NO$(17)="KEYS":NO$(18)="NECKLACE"
+30315 NO$(19)="SESAME":NO$(20)="GRAFFITI"
+30316 NO$(21)="CAPE":NO$(22)="HAMBURGER"
+30317 NO$(23)="TAPE":NO$(24)="TURBO"
+30318 NO$(25)="SCIENTIST":NO$(26)="PLANS"
+30319 NO$(27)="SCHEMATIC":NO$(28)="DEVICE":NO$(29)="GUN"
+30320 NO$(30)="SECURITY":NO$(31)="I.D.":NO$(32)="CRYSTALS"
+30321 NO$(33)="SIGN":NO$(34)="ROBOT":NO$(35)="PRINCESS"
+30322 NO$(36)="DOOR":NO$(37)="AMMUNITION"
+
+30323 CL=37:DIM DS$(CL)
+30324 DS$(1)="I'm in the passenger & storage compartment of my space ship. There's an exit here to leave the ship."
+30325 DATA 2,0,0,0,0,3
+30326 DS$(2)="I'm in the cockpit of my space ship. A large red button says >> PRESS TO BLAST OFF <<"
+30327 DATA 0,0,1,0,0,0
+30328 DS$(3)="I'm standing next to my space ship which is located on a huge flight deck."
+30329 DATA 18,0,4,0,1,0
+30330 DS$(4)="I'm out on the flight deck of General Doom's Battle Cruiser."
+30331 DATA 3,5,4,4,0,0
+30332 DS$(5)=DS$(4)
+30333 DATA 4,6,5,4,0,0
+30334 DS$(6)="I'm in a hallway. There are doors on all sides. The door to the north says: >> CLOSED FOR THE DAY <<"
+30335 DATA 7,0,8,5,0,0
+30336 DS$(7)="I'm in the SUPPLY DEPOT. around me I see: all kinds of things"
+30337 DATA 0,0,6,0,0,0
+30338 DS$(8)="I'm at the end of one of the hallways. I can here voices nearby. Sounds like guards."
+30339 DATA 6,10,0,9,0,12
+30340 DS$(9)="I'm in the STRATEGY PLANNING room."
+30341 DATA 11,8,0,0,0,0
+30342 DS$(10)="I'm in the DECONTAMINATION area."
+30343 DATA 0,14,0,8,0,0
+30344 DS$(11)="This area is the tractor beam control room. A large sign warns:  >> DO NOT PRESS ANY BUTTONS <<"
+30345 DATA 0,0,9,0,0,0
+30346 DS$(12)="I'm in another hallway. To the EAST is a restroom."
+30347 DATA 15,13,0,0,8,0
+30348 DS$(13)="This is what is commonly called on earth, the BATHROOM. There's graffiti written all over the wall. Pipes lead up through the ceiling."
+30349 DATA 15,0,0,12,27,0
+30350 DS$(14)="This appears to be an interrogation room."
+30351 DATA 0,0,0,10,0,0
+30352 DS$(15)="I'm in a LOUNGE."
+30353 DATA 0,0,13,12,0,0
+30354 DS$(16)="This is a computer room. There's a TRS-80 in here. On the screen it says:  >> CSAVE TAPE <<"
+30355 DATA 17,0,18,0,0,0
+30356 DS$(17)="I'm in a testing labortory."
+30357 DATA 0,0,16,0,0,0
+30358 DS$(18)="I'm in a hallway. A large arrow points EAST and says: >> TO THE VAULT <<"
+30359 DATA 16,25,3,19,0,0
+30360 DS$(19)="This is the entrance to the DEVELOPMENT LAB SECTION"
+30361 DATA 20,18,21,20,22,0
+30362 DS$(20)="I'm in a long corridor. There are labortories all around me."
+30363 DATA 19,23,21,20,22,24
+30364 DS$(21)="I'm in a research lab."
+30365 DATA 20,0,0,0,0,0
+30366 DS$(22)="I'm lost!"
+30367 DATA 22,22,22,22,22,20
+30368 DS$(23)=DS$(21)
+30369 DATA 0,0,0,20,0,0
+30370 DS$(24)=DS$(21)
+30371 DATA 0,0,0,0,20,0
+30372 DS$(25)="I'm near the entrance to the vault. A sign here says: >> AUTHORIZED PERSONEL ONLY <<"
+30373 DATA 0,26,0,18,0,0
+30374 DS$(26)="I'm in the vault."
+30375 DATA 0,0,0,25,0,0
+30376 DS$(27)="I'm in a pipe tunnel which leads in every direction."
+30377 DATA 28,27,27,27,27,13
+30378 DS$(28)=DS$(27)
+30379 DATA 29,29,29,29,30,29
+30380 DS$(29)="I'm lost in a maze of pipes."
+30381 DATA 28,29,29,29,29,27
+30382 DS$(30)="I'm in the pipe maze. Below me I think I can see the jail."
+30383 DATA 29,29,28,29,29,31
+30384 DS$(31)="I'm in the jail."
+30385 DATA 32,33,34,35,0,0
+30386 DS$(32)="I'm in a jail cell."
+30387 DATA 0,0,31,0,0,0
+30388 DS$(33)=DS$(32)
+30389 DATA 0,0,0,31,0,0
+30390 DS$(34)=DS$(32)
+30391 DATA 31,0,0,0,0,0
+30392 DS$(35)="I'm at the security desk. To the north an elevator."
+30393 DATA 36,31,0,0,0,0
+30394 DS$(36)="I'm in the elevator."
+30395 DATA 0,0,35,0,37,0
+30396 DS$(37)=DS$(36)
+30397 DATA 0,0,14,0,0,36
+
+30398 LO=23:DIM OB$(LO)
+30399 OB$(1)="a TAG which says: >> NEEDS TURBO <<"
+30400 DATA 11,5,0
+30401 OB$(2)="Anti-matter FUEL"
+30402 DATA 12,5,5
+30403 OB$(3)="BLASTER"
+30404 DATA 13,7,0
+30405 OB$(4)="COMMUNICATOR"
+30406 DATA 14,9,0
+30407 OB$(5)="A very surprised GUARD"
+30408 DATA 15,9,0
+30409 OB$(6)="MAP of the ship"
+30410 DATA 16,29,20
+30411 OB$(7)="some KEYS"
+30412 DATA 17,9,0
+30413 OB$(8)="a shinestone NECKLACE"
+30414 DATA 18,10,20
+30415 OB$(9)="Princess Leya's CAPE"
+30416 DATA 21,14,5
+30417 OB$(10)="McDonald's HAMBURGER"
+30418 DATA 22,15,0
+30419 OB$(11)="a cassette TAPE"
+30420 DATA 23,7,0
+30421 OB$(12)="a TURBOENCABULATOR"
+30422 DATA 24,17,5
+30423 OB$(13)="an evil looking SCIENTIST"
+30424 DATA 25,17,0
+30425 OB$(14)="secret attack PLANS"
+30426 DATA 26,0,20
+30427 OB$(15)="Death Ray SCHEMATIC"
+30428 DATA 27,9,20
+30429 OB$(16)="Cloaking DEVICE"
+30430 DATA 28,17,20
+30431 OB$(17)="Micro Laser GUN"
+30432 DATA 29,24,20
+30433 OB$(18)="I.D. card"
+30434 DATA 31,17,0
+30435 OB$(19)="Malidium CRYSTALS (the Treasury!)"
+30436 DATA 32,26,30
+30437 OB$(20)="a SIGN which says: >> OUT OF ORDER <<"
+30438 DATA 33,3,0
+30439 OB$(21)="attack ROBOT"
+30440 DATA 34,35,0
+30441 OB$(22)="PRINCESS Leya"
+30442 DATA 35,34,50
+30443 OB$(23)="AMMUNITION"
+30444 DATA 37,7,0
+30445 DIM DS(CL,5):RESTORE
+30446 FOR ZL=1 TO CL:FOR ZD=0 TO 5
+30447 READ DS(ZL,ZD):NEXT ZD:NEXT ZL
+30448 DIM OB(LO,2)
+30449 FOR ZL=1 TO LO:READ OB(ZL,0),OB(ZL,1),OB(ZL,2):NEXT ZL
+
+30450 DIM HE$(CL)
+30451 HE$(1)="I think we're suppose to leave the stuff here."
+30452 HE$(2)="I wonder if we have enough fuel?"
+30453 HE$(7)="How 'bout a BLASTER."
+30454 HE$(9)="Try SHOOT GUARD."
+30455 HE$(13)="It might be intersting to read the graffiti."
+30456 HE$(17)="Try SHOOT SCIENTIST."
+30457 HE$(22)="I'm as confused as you are.":HE$(29)=HE$(22)
+30458 HE$(31)="It might help if we had some keys to OPEN any locked DOOR S."
+30459 HE$(35)="Did you bring anything to eat?"
+30460 M0$="I can't go there. The door is locked."
+30461 M1$="I'm not carrying any blank tape."
+30462 M2$="The TRS-80 recorded something on the tape, and then it printed: >> ATTACK PLANS -- VERY SECRET <<"
+30463 M3$="I can't. I'm not carrying any keys."
+30464 M4$="O.K. The door to the jail cell is unlocked."
+30465 M5$="There's no robot here."
+30466 M6$="But I don't have any hamburgers."
+30467 M7$="Chump...chump   BURP! The princess thanks you for a delicious meal."
+30468 M8$=" doesn't eat hamburger."
+30469 M9$="Nothing happened. The hamburger is cold you know."
+30470 N0$="The attack robot eats the hamburger and disappears."
+30471 N1$="I'm at the identification terminal. On the screen it says: >> SHOW I.D. <<"
+30472 N2$="The tractor beam is off."
+30473 N3$="The tractor beam is on."
+30474 N4$="You forgot to open the flight deck doors."
+30475 RETURN
+
+REM word-wrap
+30500DEFPROCw($W%):LOCALA%,Z%,C%,N%:N%=LEN$W%:A%=0:Z%=L%+1-POS:REPEATIFZ%>N%Z%=N%ELSEREPEATZ%=Z%-1:C%=W%?Z%:UNTILC%=32:IFZ%>=A%ELSEIFPOS PRINT:Z%=L%+1:UNTIL0 ELSESTOP
+30502W%?Z%=&D:PRINT$(W%+A%);:IFZ%<N%IFPOS PRINT
+30504A%=Z%+1:Z%=A%+L%+1:UNTILA%>=N%:IFPOS PRINT:ENDPROC ELSEENDPROC
+
+REM is previous line blank?
+30508DEFFNb:LOCALA%,C%,I%:VDU11:IFHIMEM<&7C01 ELSEVDU8:A%=&87:FORI%=1TOL%:VDU9:C%=(USR(&FFF4)AND&FF00)DIV256:IFC%=32NEXT:VDU10,13:=0 ELSEI%=L%:NEXT:VDU10,13:=1
+30510A%=?&34B*256+?&34A:VDU10:FORI%=0TO39STEP4
+30512C%=A%+I%:C%=C%+&400*(C%>&7FFF)
+30514IF!C%=&20202020NEXT:=0ELSEI%=39:NEXT:=1
